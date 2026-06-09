@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты поиска - Свой турист</title>
+    <link rel="stylesheet" href="search-results.css">
+</head>
+<body>
+    <header class="site-header">
+    <div class="header-container">
+        <a href="index.html" class="logo">Свой турист</a>  
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">Главная</a>
+            <a href="search-results.html" class="nav-link">Поиск</a>
+            <a href="payment.html" class="nav-link">Оплата</a>
+            <a href="confirmation.html" class="nav-link">Бронирования</a>
+            <a href="destinations.html" class="nav-link">Каталог</a>
+            <a href="profile.html" class="nav-link">Кабинет</a>
+        </nav>
+    </div>
+</header>
+    <nav class="navbar">
+        <div class="logo">Свой турист</div>
+        <div>
+            <a href="index.html" style="color: #38938B; text-decoration: none; font-weight: 600;">← На главную</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="search-header">
+            <div class="search-query">Отели в Доминикане</div>
+            <div class="search-meta">20 янв 2025 - 27 янв 2025 • 2 взрослых</div>
+        </div>
+        
+        <div class="main-layout">
+            <aside class="filters-sidebar">
+                <div class="filter-group">
+                    <div class="filter-title">Цена за ночь</div>
+                    <div class="price-range">
+                        <input type="number" class="price-input" placeholder="От" value="5000">
+                        <span>—</span>
+                        <input type="number" class="price-input" placeholder="До" value="50000">
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="filter-title">Звездность</div>
+                    <label class="filter-option">
+                        <input type="checkbox" checked>
+                        <span>5 звезд</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" checked>
+                        <span>4 звезды</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox">
+                        <span>3 звезды</span>
+                    </label>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="filter-title">Удобства</div>
+                    <label class="filter-option">
+                        <input type="checkbox" checked>
+                        <span>Бассейн</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox">
+                        <span>Wi-Fi</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" checked>
+                        <span>Спа</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox">
+                        <span>Ресторан</span>
+                    </label>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="filter-title">Тип питания</div>
+                    <label class="filter-option">
+                        <input type="checkbox" checked>
+                        <span>Все включено</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox">
+                        <span>Завтрак</span>
+                    </label>
+                </div>
+            </aside>
+            
+            <main>
+                <div class="results-header">
+                    <div class="results-count">Найдено: 24 отеля</div>
+                    <select class="sort-select">
+                        <option>Сначала популярные</option>
+                        <option>Сначала дешевые</option>
+                        <option>Сначала дорогие</option>
+                        <option>По рейтингу</option>
+                    </select>
+                </div>
+                
+                <div class="hotel-card" onclick="window.location.href='hotel-detail.html'">
+                    <div class="hotel-image"></div>
+                    <div class="hotel-content">
+                        <h3 class="hotel-name">Occidental Punta Cana</h3>
+                        <div class="hotel-location">Пунта-Кана, Доминикана</div>
+                        <div class="hotel-rating">
+                            <span class="stars">★★★★★</span>
+                            <span class="review-count">328 отзывов</span>
+                        </div>
+                        <div class="hotel-features">
+                            <span class="feature-tag">Первая линия</span>
+                            <span class="feature-tag">Все включено</span>
+                            <span class="feature-tag">Бассейн</span>
+                            <span class="feature-tag">Спа</span>
+                        </div>
+                        <div class="hotel-footer">
+                            <div>
+                                <div class="hotel-price">12 500 ₽</div>
+                                <div class="price-note">за ночь на двоих</div>
+                            </div>
+                            <button class="btn-view">Подробнее</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hotel-card" onclick="window.location.href='hotel-detail.html'">
+                    <div class="hotel-image" style="background-image: url('https://avatars.mds.yandex.net/i?id=4fc71cdbb783ffe7ed872421b8f7d36f_l-5367858-images-thumbs&n=13')"></div>
+                    <div class="hotel-content">
+                        <h3 class="hotel-name">Barceló Bávaro Palace</h3>
+                        <div class="hotel-location">Bávaro, Доминикана</div>
+                        <div class="hotel-rating">
+                            <span class="stars">★★★★★</span>
+                            <span class="review-count">512 отзывов</span>
+                        </div>
+                        <div class="hotel-features">
+                            <span class="feature-tag">Пляж</span>
+                            <span class="feature-tag">Все включено</span>
+                            <span class="feature-tag">Гольф</span>
+                        </div>
+                        <div class="hotel-footer">
+                            <div>
+                                <div class="hotel-price">15 800 ₽</div>
+                                <div class="price-note">за ночь на двоих</div>
+                            </div>
+                            <button class="btn-view">Подробнее</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hotel-card" onclick="window.location.href='hotel-detail.html'">
+                    <div class="hotel-image" style="background-image: url('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/30/a1/17/6e/pool-area-majestic-mirage.jpg?w=900&h=500&s=1')"></div>
+                    <div class="hotel-content">
+                        <h3 class="hotel-name">Majestic Mirage Punta Cana</h3>
+                        <div class="hotel-location">Punta Cana, Доминикана</div>
+                        <div class="hotel-rating">
+                            <span class="stars">★★★★★</span>
+                            <span class="review-count">289 отзывов</span>
+                        </div>
+                        <div class="hotel-features">
+                            <span class="feature-tag">Private Beach</span>
+                            <span class="feature-tag">Ultra All Inclusive</span>
+                            <span class="feature-tag">Luxury</span>
+                        </div>
+                        <div class="hotel-footer">
+                            <div>
+                                <div class="hotel-price">18 200 ₽</div>
+                                <div class="price-note">за ночь на двоих</div>
+                            </div>
+                            <button class="btn-view">Подробнее</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

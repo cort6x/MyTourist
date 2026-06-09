@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой профиль</title>
+    <link rel="stylesheet" href="profile.css">
+
+</head>
+<body>
+
+    <div class="page-loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <div class="profile-container">
+
+        <div class="user-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <span class="profile-title">Мой профиль</span>
+
+
+        <button class="main-btn" onclick="openModal('Управление аккаунтом')">Управление аккаунтом</button>
+
+
+        <button class="menu-btn" onclick="openModal('Уведомления')">Уведомления</button>
+        <button class="menu-btn" onclick="openModal('Не беспокоить')">Не беспокоить</button>
+
+        <div class="divider"></div>
+
+
+        <button class="menu-btn" onclick="openModal('Аккаунт')">Аккаунт</button>
+        <button class="menu-btn" onclick="openModal('Внешний вид')">Внешний вид</button>
+        <button class="menu-btn" onclick="openModal('Ближайшие поездки')">Ближайшие поездки</button>
+        <button class="menu-btn" onclick="openModal('Избранное')">Избранное</button>
+        <button class="menu-btn" onclick="openModal('Отзывы')">Отзывы</button>
+        <button class="menu-btn" onclick="openModal('Отправленные сообщения')">Отправленные сообщения</button>
+        <button class="menu-btn" onclick="openModal('Полученные сообщения')">Полученные сообщения</button>
+    </div>
+
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" id="modalContent">
+            <h3 id="modalTitle">Заголовок</h3>
+            <div id="modalBody"></div>
+            <button class="modal-close" onclick="closeModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+
+        function openModal(title) {
+            const overlay = document.getElementById('modalOverlay');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = title;
+
+
+            let content = '';
+            switch(title) {
+                case 'Управление аккаунтом':
+                    content = '<p>Здесь вы можете изменить настройки вашего аккаунта, обновить личную информацию и настроить безопасность.</p>';
+                    content += '<div class="toggle-row"><span class="toggle-label">Email-уведомления</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>';
+                    content += '<div class="toggle-row"><span class="toggle-label">SMS-уведомления</span><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>';
+                    content += '<div class="toggle-row"><span class="toggle-label">Push-уведомления</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>';
+                    break;
+                case 'Уведомления':
+                    content = '<p>Настройте предпочтения уведомлений. Вы можете выбирать, какие уведомления получать и каким образом.</p>';
+                    content += '<div class="toggle-row"><span class="toggle-label">Акции и скидки</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>';
+                    content += '<div class="toggle-row"><span class="toggle-label">Новости</span><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>';
+                    content += '<div class="toggle-row"><span class="toggle-label">Напоминания о поездках</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>';
+                    break;
+                case 'Не беспокоить':
+                    content = '<p>Включите режим "Не беспокоить", чтобы временно отключить все уведомления. Вы не будете получать оповещения в выбранное время.</p>';
+                    content += '<div class="toggle-row"><span class="toggle-label">Активировать</span><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>';
+                    break;
+                case 'Аккаунт':
+                    content = '<p>Управление данными вашего аккаунта. Вы можете изменить email, пароль и другие настройки безопасности.</p>';
+                    content += '<div class="toggle-row"><span class="toggle-label">Двухфакторная аутентификация</span><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>';
+                    break;
+                case 'Внешний вид':
+                    content = '<p>Настройте внешний вид приложения. Выберите тему, размер шрифта и другие визуальные параметры.</p>';
+                    break;
+                case 'Ближайшие поездки':
+                    content = '<p>Здесь будут отображаться ваши предстоящие поездки. Пока у вас нет запланированных поездок.</p>';
+                    break;
+                case 'Избранное':
+                    content = '<p>Сохранённые отели и направления, которые вам понравились. Добавьте что-нибудь в избранное, нажав на сердечко.</p>';
+                    break;
+                case 'Отзывы':
+                    content = '<p>Ваши отзывы об отелях и экскурсиях. Спасибо, что делитесь впечатлениями!</p>';
+                    break;
+                case 'Отправленные сообщения':
+                    content = '<p>История отправленных вами сообщений. Здесь вы можете найти все ваши предыдущие переписки.</p>';
+                    break;
+                case 'Полученные сообщения':
+                    content = '<p>Полученные сообщения от поддержки и других пользователей. У вас нет новых сообщений.</p>';
+                    break;
+                default:
+                    content = '<p>Раздел в разработке. Скоро здесь появится новая функциональность.</p>';
+            }
+
+            modalBody.innerHTML = content;
+            overlay.classList.add('active');
+        }
+
+        function closeModal(event) {
+            if (event && event.target !== document.getElementById('modalOverlay')) return;
+            const overlay = document.getElementById('modalOverlay');
+            overlay.classList.remove('active');
+        }
+
+        <button class="menu-btn" onclick="logout()" style="background: #ff4444; color: white; margin-top: 20px;">🚪 Выйти</button>
+
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/entrance.html';
+}
+    </script>
+
+</body>
+</html>

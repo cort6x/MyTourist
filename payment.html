@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оплата бронирования - Свой турист</title>
+    <link rel="stylesheet" href="payment.css">
+</head>
+<body>
+    <header class="site-header">
+    <div class="header-container">
+        <a href="index.html" class="logo">Свой турист</a>  
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">Главная</a>
+            <a href="search-results.html" class="nav-link">Поиск</a>
+            <a href="payment.html" class="nav-link">Оплата</a>
+            <a href="confirmation.html" class="nav-link">Бронирования</a>
+            <a href="destinations.html" class="nav-link">Каталог</a>
+            <a href="profile.html" class="nav-link">Кабинет</a>
+        </nav>
+    </div>
+</header>
+    <nav class="navbar">
+        <div class="logo">Свой турист</div>
+        <div style="color: #38938B; font-weight: 600;">Безопасная оплата</div>
+    </nav>
+    
+    <div class="container">
+        <h1 class="page-title">Оплата бронирования</h1>
+        
+        <div class="payment-card">
+            <div class="order-summary">
+                <div class="summary-row">
+                    <span class="summary-label">Отель:</span>
+                    <span class="summary-value">Occidental Punta Cana</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Даты:</span>
+                    <span class="summary-value">20.01.2025 - 27.01.2025 (7 ночей)</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Гости:</span>
+                    <span class="summary-value">2 взрослых</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Номер:</span>
+                    <span class="summary-value">Deluxe Ocean View</span>
+                </div>
+                <div class="total-row">
+                    <span class="total-label">Итого к оплате:</span>
+                    <span class="total-amount">87 500 ₽</span>
+                </div>
+            </div>
+            
+            <div class="card-preview">
+                <div class="card-chip"></div>
+                <div class="card-number" id="cardNumberDisplay">**** **** **** ****</div>
+                <div class="card-details">
+                    <div class="card-holder" id="cardHolderDisplay">CARD HOLDER</div>
+                    <div class="card-expiry" id="cardExpiryDisplay">MM/YY</div>
+                </div>
+            </div>
+            
+            <div class="payment-methods">
+                <h3 class="method-title">Способ оплаты</h3>
+                <div class="payment-options">
+                    <div class="payment-option selected" onclick="selectPayment(this)">
+                        <div class="payment-name">Банковская карта</div>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment(this)">
+                        <div class="payment-name">Apple Pay</div>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment(this)">
+                        <div class="payment-name">Банковский перевод</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3 class="section-title">Данные карты</h3>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="form-label">Номер карты</label>
+                    <input type="text" class="form-input" placeholder="0000 0000 0000 0000" maxlength="19" id="cardNumber" oninput="updateCardDisplay()">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Срок действия</label>
+                        <input type="text" class="form-input" placeholder="MM/YY" maxlength="5" id="cardExpiry" oninput="updateCardDisplay()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">CVV/CVC</label>
+                        <input type="text" class="form-input" placeholder="123" maxlength="3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Имя владельца карты</label>
+                    <input type="text" class="form-input" placeholder="IVAN IVANOV" id="cardHolder" oninput="updateCardDisplay()">
+                </div>
+            </div>
+            
+            <div class="secure-badge">
+                <span>Ваши данные защищены</span>
+            </div>
+            
+            <button class="btn-pay" onclick="processPayment()">Оплатить 87 500 ₽</button>
+        </div>
+    </div>
+    
+    <script>
+        function selectPayment(element) {
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+        
+        function updateCardDisplay() {
+            const number = document.getElementById('cardNumber').value;
+            const expiry = document.getElementById('cardExpiry').value;
+            const holder = document.getElementById('cardHolder').value;
+            
+            if (number) {
+                document.getElementById('cardNumberDisplay').textContent = number || '**** **** **** ****';
+            }
+            if (expiry) {
+                document.getElementById('cardExpiryDisplay').textContent = expiry;
+            }
+            if (holder) {
+                document.getElementById('cardHolderDisplay').textContent = holder.toUpperCase();
+            }
+        }
+        
+        function processPayment() {
+            const cardNumber = document.getElementById('cardNumber').value;
+            const cardHolder = document.getElementById('cardHolder').value;
+            
+            if (!cardNumber || !cardHolder) {
+                alert('Пожалуйста, заполните все обязательные поля');
+                return;
+            }
+            
+            alert('Оплата прошла успешно! Подтверждение отправлено на email.');
+            window.location.href = 'confirmation.html';
+        }
+    </script>
+</body>
+</html>
