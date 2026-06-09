@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Occidental Punta Cana - Свой турист</title>
     <link rel="stylesheet" href="hotel-detail.css">
+<script src="auth.js"></script>
 </head>
 <body>
     <header class="site-header">
@@ -143,6 +144,11 @@
             window.location.href = 'booking.html?hotel=1&checkin=' + checkIn + '&checkout=' + checkOut;
         }
     </script>
-<script src="auth.js"></script>
-</body>
+<script>document.addEventListener('DOMContentLoaded',()=>Auth.updateNavbar());</script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const book=document.querySelector('button');
+ if(book){ book.onclick=()=>{ const booking={type:'hotel',title:'Occidental Punta Cana',location:'Пунта-Кана, Доминикана',check_in:'',check_out:'',guests:2,price:87500}; sessionStorage.setItem('pendingBooking',JSON.stringify(booking)); location.href='/payment.html'; }; }
+});
+</script></body>
 </html>

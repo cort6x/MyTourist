@@ -6,6 +6,7 @@
     <title>Достопримечательности и экскурсии</title>
     <link rel="stylesheet" href="attractions.css">
 
+<script src="auth.js"></script>
 </head>
 <body>
 
@@ -216,6 +217,6 @@
         }
     </script>
 
-<script src="auth.js"></script>
-</body>
+<script>document.addEventListener('DOMContentLoaded',()=>Auth.updateNavbar());</script>
+<script>function bookExcursion(){location.href="/excursion-booking.html";}</script></body>
 </html>

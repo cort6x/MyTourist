@@ -21,22 +21,22 @@
         <span class="profile-title">Мой профиль</span>
 
 
-        <button class="main-btn" onclick="openModal('Управление аккаунтом')">Управление аккаунтом</button>
+        <button class="main-btn" onclick="openModal('account')">Управление аккаунтом</button>
 
 
-        <button class="menu-btn" onclick="openModal('Уведомления')">Уведомления</button>
-        <button class="menu-btn" onclick="openModal('Не беспокоить')">Не беспокоить</button>
+        <button class="menu-btn" onclick="openModal('notifications')">Уведомления</button>
+        <button class="menu-btn" onclick="openModal('dnd')">Не беспокоить</button>
 
         <div class="divider"></div>
 
 
-        <button class="menu-btn" onclick="openModal('Аккаунт')">Аккаунт</button>
-        <button class="menu-btn" onclick="openModal('Внешний вид')">Внешний вид</button>
-        <button class="menu-btn" onclick="openModal('Ближайшие поездки')">Ближайшие поездки</button>
-        <button class="menu-btn" onclick="openModal('Избранное')">Избранное</button>
-        <button class="menu-btn" onclick="openModal('Отзывы')">Отзывы</button>
-        <button class="menu-btn" onclick="openModal('Отправленные сообщения')">Отправленные сообщения</button>
-        <button class="menu-btn" onclick="openModal('Полученные сообщения')">Полученные сообщения</button>
+        <button class="menu-btn" onclick="openModal('edit')">Аккаунт</button>
+        <button class="menu-btn" onclick="openModal('theme')">Внешний вид</button>
+        <button class="menu-btn" onclick="openModal('bookings')">Ближайшие поездки</button>
+        <button class="menu-btn" onclick="openModal('favorites')">Избранное</button>
+        <button class="menu-btn" onclick="openModal('reviews')">Отзывы</button>
+        <button class="menu-btn" onclick="openModal('sent')">Отправленные сообщения</button>
+        <button class="menu-btn" onclick="openModal('received')">Полученные сообщения</button>
     </div>
 
 
@@ -121,5 +121,28 @@ function logout() {
     </script>
 
 <script src="auth.js"></script>
+<script>
+const modalData = {
+account: { title:'Управление аккаунтом', body:'<p>Настройте аккаунт и безопасность.</p><div class="toggle-row"><span class="toggle-label">Email-уведомления</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div><div class="toggle-row"><span class="toggle-label">SMS-уведомления</span><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div><div class="toggle-row"><span class="toggle-label">Push-уведомления</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>' },
+notifications: { title:'Уведомления', body:'<p>Настройте уведомления.</p><div class="toggle-row"><span class="toggle-label">Акции и скидки</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div><div class="toggle-row"><span class="toggle-label">Новости</span><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div><div class="toggle-row"><span class="toggle-label">Напоминания о поездках</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>' },
+dnd: { title:'Не беспокоить', body:'<p>Режим тишины.</p><div class="toggle-row"><span class="toggle-label">Активировать</span><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>' },
+edit: { title:'Редактировать профиль', body:'<div style="display:flex;flex-direction:column;gap:12px;"><input id="editUsername" placeholder="Имя пользователя" style="padding:12px;border:1px solid #ddd;border-radius:8px;"><input id="editEmail" placeholder="Email" style="padding:12px;border:1px solid #ddd;border-radius:8px;"><input id="editCurrentPwd" type="password" placeholder="Текущий пароль" style="padding:12px;border:1px solid #ddd;border-radius:8px;"><input id="editNewPwd" type="password" placeholder="Новый пароль" style="padding:12px;border:1px solid #ddd;border-radius:8px;"><div id="editMsg" style="font-size:13px;min-height:18px;text-align:center;"></div><button onclick="saveProfile()" style="padding:12px;background:#38938B;color:#fff;border:none;border-radius:8px;">Сохранить</button></div>' },
+bookings: { title:'Мои бронирования', body:'<div id="bookingsContent">Загрузка...</div>' },
+favorites: { title:'Избранное', body:'<div id="favoritesContent">Загрузка...</div>' },
+reviews: { title:'Отзывы', body:'<p>Раздел отзывов будет доступен после первого бронирования.</p>' },
+sent: { title:'Отправленные сообщения', body:'<p>Сообщения пока отсутствуют.</p>' },
+received: { title:'Полученные сообщения', body:'<p>Сообщения пока отсутствуют.</p>' },
+theme: { title:'Внешний вид', body:'<p>Светлая тема активна. Темная тема будет добавлена в следующих версиях.</p>' }
+};
+function openModal(key){ const m=modalData[key]; document.getElementById('modalTitle').textContent=m.title; document.getElementById('modalBody').innerHTML=m.body; document.getElementById('modalOverlay').style.display='flex'; if(key==='bookings') loadBookings(); if(key==='favorites') loadFavorites(); if(key==='edit'){ const u=Auth.getUser()||{}; document.getElementById('editUsername').value=u.username||''; document.getElementById('editEmail').value=u.email||''; } }
+function closeModal(e){ if(!e||e.target.id==='modalOverlay') document.getElementById('modalOverlay').style.display='none'; }
+async function saveProfile(){ const payload={ username:document.getElementById('editUsername').value.trim(), email:document.getElementById('editEmail').value.trim(), currentPassword:document.getElementById('editCurrentPwd').value, newPassword:document.getElementById('editNewPwd').value }; const r=await Auth.apiRequest('/api/profile',{method:'PUT',body:JSON.stringify(payload)}); const el=document.getElementById('editMsg'); el.textContent=r.success?'Профиль обновлён':(r.error||'Ошибка'); el.style.color=r.success?'#38938B':'#e53935'; if(r.success){ const me=await Auth.apiRequest('/api/profile'); if(me.user){ localStorage.setItem('user',JSON.stringify(me.user)); document.querySelector('.profile-title').textContent=me.user.username; } } }
+async function loadBookings(){ const r=await Auth.apiRequest('/api/bookings'); const c=document.getElementById('bookingsContent'); c.innerHTML=(r.bookings||[]).map(b=>`<div style="border:1px solid #eee;padding:12px;border-radius:10px;margin-bottom:10px;"><div style="font-weight:600;">${escapeHtml(b.title)}</div><div style="color:#777;font-size:13px;">${escapeHtml(b.location||'')}</div><div style="color:#777;font-size:13px;">${escapeHtml(b.check_in||'')} ${b.check_out? '— '+escapeHtml(b.check_out):''}</div><div style="margin-top:6px;color:#38938B;font-weight:600;">${Number(b.price||0).toLocaleString('ru')} ₽</div><button onclick="cancelBooking(${b.id})" style="margin-top:8px;border:1px solid #e53935;color:#e53935;background:#fff;padding:6px 10px;border-radius:6px;">Отменить</button></div>`).join('') || '<p>Нет бронирований</p>'; }
+async function cancelBooking(id){ if(!confirm('Отменить бронирование?')) return; await Auth.apiRequest('/api/bookings/'+id,{method:'DELETE'}); loadBookings(); }
+async function loadFavorites(){ const r=await Auth.apiRequest('/api/favorites'); const c=document.getElementById('favoritesContent'); c.innerHTML=(r.favorites||[]).map(f=>`<div style="border:1px solid #eee;padding:12px;border-radius:10px;margin-bottom:10px;"><div style="font-weight:600;">${escapeHtml(f.title)}</div><div style="color:#777;font-size:13px;">${escapeHtml(f.location||'')}</div><button onclick="removeFav('${f.item_type}','${f.item_id}')" style="margin-top:8px;border:1px solid #38938B;color:#38938B;background:#fff;padding:6px 10px;border-radius:6px;">Убрать</button></div>`).join('') || '<p>Нет избранного</p>'; }
+async function removeFav(type,id){ await Auth.apiRequest('/api/favorites/'+type+'/'+id,{method:'DELETE'}); loadFavorites(); }
+document.addEventListener('DOMContentLoaded',async()=>{ if(!Auth.isLoggedIn()){ sessionStorage.setItem('redirectAfterLogin','/profile.html'); location.href='/entrance.html'; return; } const me=await Auth.apiRequest('/api/profile'); if(me.user){ document.querySelector('.profile-title').textContent=me.user.username; document.querySelector('#profileEmail').textContent=me.user.email; document.getElementById('profileContainer').style.display='flex'; } });
+function logout(){ Auth.logout(); }
+</script>
 </body>
 </html>

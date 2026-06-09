@@ -6,6 +6,7 @@
     <title>Главная</title>
     <link rel="stylesheet" href="style.css">
    
+<script src="auth.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -227,8 +228,14 @@
         </div>
     </footer>
 
-<script src="auth.js"></script>
-</body>
+<script>document.addEventListener('DOMContentLoaded',()=>Auth.updateNavbar());</script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const s=document.querySelector('.search-box input');
+ if(s) s.addEventListener('keypress',e=>{ if(e.key==='Enter' && s.value.trim()) location.href='/search-results.html?q='+encodeURIComponent(s.value.trim()); });
+ const hero=document.querySelector('.hero-btn'); if(hero) hero.href='/destinations.html';
+});
+</script></body>
 </html>
 
 

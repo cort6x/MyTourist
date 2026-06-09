@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Бронирование экскурсии - Свой турист</title>
     <link rel="stylesheet" href="excursion-booking.css">
+<script src="auth.js"></script>
 </head>
 <body>
     <header class="site-header">
@@ -168,6 +169,12 @@
             window.location.href = 'confirmation.html';
         }
     </script>
-<script src="auth.js"></script>
-</body>
+<script>document.addEventListener('DOMContentLoaded',()=>Auth.updateNavbar());</script>
+<script>
+function processPayment(){
+ const booking={type:'excursion',title:'Rio Sonador',location:'Доминикана',check_in:'',check_out:'',guests:2,price:4500};
+ if(!Auth.isLoggedIn()){ sessionStorage.setItem('redirectAfterLogin','/excursion-booking.html'); location.href='/entrance.html'; return; }
+ Auth.apiRequest('/api/bookings',{method:'POST',body:JSON.stringify(booking)}).then(()=>{ location.href='/confirmation.html'; });
+}
+</script></body>
 </html>

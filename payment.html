@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Оплата бронирования - Свой турист</title>
     <link rel="stylesheet" href="payment.css">
+<script src="auth.js"></script>
 </head>
 <body>
     <header class="site-header">
@@ -141,6 +142,13 @@
             window.location.href = 'confirmation.html';
         }
     </script>
-<script src="auth.js"></script>
-</body>
+<script>document.addEventListener('DOMContentLoaded',()=>Auth.updateNavbar());</script>
+<script>
+function processPayment(){
+ const booking=JSON.parse(sessionStorage.getItem('pendingBooking')||'{}');
+ if(!booking.title){ alert('Нет данных бронирования'); return; }
+ if(!Auth.isLoggedIn()){ sessionStorage.setItem('redirectAfterLogin','/payment.html'); location.href='/entrance.html'; return; }
+ Auth.apiRequest('/api/bookings',{method:'POST',body:JSON.stringify(booking)}).then(()=>{ sessionStorage.removeItem('pendingBooking'); location.href='/confirmation.html'; });
+}
+</script></body>
 </html>
