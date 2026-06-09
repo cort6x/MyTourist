@@ -12,12 +12,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'svoy-tourist-secret-2024';
 app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
-const db = new sqlite3.Database('./users.db', (err) => {
-  if (err) console.error('DB error:', err.message);
-  else initDatabase();
-});
+const db = new sqlite3.Database('./users.db');
 
 function initDatabase() {
   db.run(`CREATE TABLE IF NOT EXISTS users (
@@ -27,6 +23,7 @@ function initDatabase() {
     password TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+
   db.run(`CREATE TABLE IF NOT EXISTS bookings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -42,6 +39,7 @@ function initDatabase() {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id)
   )`);
+
   db.run(`CREATE TABLE IF NOT EXISTS favorites (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -54,6 +52,7 @@ function initDatabase() {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user_id, item_type, item_id)
   )`);
+
   db.run(`CREATE TABLE IF NOT EXISTS subscriptions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT UNIQUE NOT NULL,
@@ -71,26 +70,37 @@ function authMiddleware(req, res, next) {
   });
 }
 
-function generateBookingNumber() {
+function bookingNumber() {
   return 'BK' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase();
 }
+
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/entrance.html', (req, res) => res.sendFile(path.join(__dirname, 'entrance.html')));
+app.get('/profile.html', (req, res) => res.sendFile(path.join(__dirname, 'profile.html')));
+app.get('/payment.html', (req, res) => res.sendFile(path.join(__dirname, 'payment.html')));
+app.get('/confirmation.html', (req, res) => res.sendFile(path.join(__dirname, 'confirmation.html')));
+app.get('/search-results.html', (req, res) => res.sendFile(path.join(__dirname, 'search-results.html')));
+app.get('/hotel-detail.html', (req, res) => res.sendFile(path.join(__dirname, 'hotel-detail.html')));
+app.get('/excursion-booking.html', (req, res) => res.sendFile(path.join(__dirname, 'excursion-booking.html')));
+app.get('/destinations.html', (req, res) => res.sendFile(path.join(__dirname, 'destinations.html')));
+app.get('/attractions.html', (req, res) => res.sendFile(path.join(__dirname, 'attractions.html')));
 
 app.post('/api/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
     if (!username || !email || !password) return res.status(400).json({ error: 'Заполните все поля' });
     if (password.length < 6) return res.status(400).json({ error: 'Пароль минимум 6 символов' });
-    const hashedPassword = await bcrypt.hash(password, 10);
-    db.get('SELECT email FROM users WHERE email = ? OR username = ?', [email, username], (err, user) => {
+    const hash = await bcrypt.hash(password, 10);
+    db.get('SELECT 1 FROM users WHERE email = ? OR username = ?', [email, username], (err, row) => {
       if (err) return res.status(500).json({ error: 'Ошибка сервера' });
-      if (user) return res.status(400).json({ error: 'Email или имя пользователя уже используется' });
-      db.run('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hashedPassword], function(err) {
+      if (row) return res.status(400).json({ error: 'Email или имя пользователя уже используется' });
+      db.run('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hash], function(err) {
         if (err) return res.status(400).json({ error: 'Ошибка регистрации' });
         const token = jwt.sign({ userId: this.lastID, username }, JWT_SECRET, { expiresIn: '7d' });
-        res.json({ success: true, message: 'Регистрация успешна!', token, user: { id: this.lastID, username, email } });
+        res.json({ success: true, token, user: { id: this.lastID, username, email } });
       });
     });
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });
@@ -101,8 +111,8 @@ app.post('/api/login', (req, res) => {
   db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
     if (err) return res.status(500).json({ error: 'Ошибка сервера' });
     if (!user) return res.status(400).json({ error: 'Неверный email или пароль' });
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) return res.status(400).json({ error: 'Неверный email или пароль' });
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return res.status(400).json({ error: 'Неверный email или пароль' });
     const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ success: true, token, user: { id: user.id, username: user.username, email: user.email } });
   });
@@ -122,17 +132,17 @@ app.put('/api/profile', authMiddleware, async (req, res) => {
     const nextUsername = username || user.username;
     const nextEmail = email || user.email;
     if (newPassword) {
-      const isValid = await bcrypt.compare(currentPassword || '', user.password);
-      if (!isValid) return res.status(400).json({ error: 'Неверный текущий пароль' });
-      const hashed = await bcrypt.hash(newPassword, 10);
-      db.run('UPDATE users SET username=?, email=?, password=? WHERE id=?', [nextUsername, nextEmail, hashed, req.user.userId], (e) => {
+      const ok = await bcrypt.compare(currentPassword || '', user.password);
+      if (!ok) return res.status(400).json({ error: 'Неверный текущий пароль' });
+      const hash = await bcrypt.hash(newPassword, 10);
+      db.run('UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?', [nextUsername, nextEmail, hash, req.user.userId], (e) => {
         if (e) return res.status(400).json({ error: 'Email уже используется' });
-        res.json({ success: true, message: 'Профиль обновлён' });
+        res.json({ success: true });
       });
     } else {
-      db.run('UPDATE users SET username=?, email=? WHERE id=?', [nextUsername, nextEmail, req.user.userId], (e) => {
-        if (e) return res.status(400).json({ error: 'Email already used' });
-        res.json({ success: true, message: 'Профиль обновлён' });
+      db.run('UPDATE users SET username = ?, email = ? WHERE id = ?', [nextUsername, nextEmail, req.user.userId], (e) => {
+        if (e) return res.status(400).json({ error: 'Email уже используется' });
+        res.json({ success: true });
       });
     }
   });
@@ -141,11 +151,11 @@ app.put('/api/profile', authMiddleware, async (req, res) => {
 app.post('/api/bookings', authMiddleware, (req, res) => {
   const { type, title, location, check_in, check_out, guests, price } = req.body;
   if (!type || !title) return res.status(400).json({ error: 'Укажите тип и название' });
-  const booking_number = generateBookingNumber();
+  const num = bookingNumber();
   db.run(`INSERT INTO bookings (user_id, type, title, location, check_in, check_out, guests, price, booking_number)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [req.user.userId, type, title, location, check_in, check_out, guests || 1, price, booking_number], function(err) {
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [req.user.userId, type, title, location, check_in, check_out, guests || 1, price, num], function(err) {
     if (err) return res.status(500).json({ error: 'Ошибка создания бронирования' });
-    res.json({ success: true, booking_number, booking_id: this.lastID });
+    res.json({ success: true, booking_number: num, booking_id: this.lastID });
   });
 });
 
@@ -159,15 +169,13 @@ app.get('/api/bookings', authMiddleware, (req, res) => {
 app.delete('/api/bookings/:id', authMiddleware, (req, res) => {
   db.run('DELETE FROM bookings WHERE id = ? AND user_id = ?', [req.params.id, req.user.userId], function(err) {
     if (err) return res.status(500).json({ error: 'Ошибка сервера' });
-    if (this.changes === 0) return res.status(404).json({ error: 'Бронирование не найдено' });
-    res.json({ success: true });
+    res.json({ success: this.changes > 0 });
   });
 });
 
 app.post('/api/favorites', authMiddleware, (req, res) => {
   const { item_type, item_id, title, location, price, image_url } = req.body;
-  db.run(`INSERT OR IGNORE INTO favorites (user_id, item_type, item_id, title, location, price, image_url)
-          VALUES (?, ?, ?, ?, ?, ?, ?)`, [req.user.userId, item_type, item_id, title, location, price, image_url], function(err) {
+  db.run(`INSERT OR IGNORE INTO favorites (user_id, item_type, item_id, title, location, price, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)`, [req.user.userId, item_type, item_id, title, location, price, image_url], function(err) {
     if (err) return res.status(500).json({ error: 'Ошибка сервера' });
     res.json({ success: true, added: this.changes > 0 });
   });
@@ -192,9 +200,9 @@ app.post('/api/subscribe', (req, res) => {
   if (!email) return res.status(400).json({ error: 'Укажите email' });
   db.run('INSERT OR IGNORE INTO subscriptions (email) VALUES (?)', [email], function(err) {
     if (err) return res.status(500).json({ error: 'Ошибка сервера' });
-    if (this.changes === 0) return res.json({ success: true, message: 'Вы уже подписаны' });
-    res.json({ success: true, message: 'Вы успешно подписались!' });
+    res.json({ success: true, message: this.changes ? 'Вы успешно подписались!' : 'Вы уже подписаны' });
   });
 });
 
+initDatabase();
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
